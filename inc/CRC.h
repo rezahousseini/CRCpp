@@ -139,7 +139,7 @@ namespace CRCPP
         If compiling with C++11, the constexpr keyword is used liberally so that many calculations are
         performed at compile-time instead of at runtime.
 */
-class CRC
+class crc
 {
 public:
     // Forward declaration
@@ -271,18 +271,18 @@ public:
 #endif
 
 #ifdef CRCPP_USE_CPP11
-    CRC() = delete;
-    CRC(const CRC & other) = delete;
-    CRC & operator=(const CRC & other) = delete;
-    CRC(CRC && other) = delete;
-    CRC & operator=(CRC && other) = delete;
+    crc() = delete;
+    crc(const crc & other) = delete;
+    crc & operator=(const crc & other) = delete;
+    crc(crc && other) = delete;
+    crc & operator=(crc && other) = delete;
 #endif
 
 private:
 #ifndef CRCPP_USE_CPP11
-    CRC();
-    CRC(const CRC & other);
-    CRC & operator=(const CRC & other);
+    crc();
+    crc(const crc & other);
+    crc & operator=(const crc & other);
 #endif
 
     template <typename IntegerType>
@@ -310,10 +310,10 @@ private:
     @return CRC lookup table
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRC::Table<CRCType, CRCWidth> CRC::Parameters<CRCType, CRCWidth>::MakeTable() const
+inline crc::Table<CRCType, CRCWidth> crc::Parameters<CRCType, CRCWidth>::MakeTable() const
 {
     // This should take advantage of RVO and optimize out the copy.
-    return CRC::Table<CRCType, CRCWidth>(*this);
+    return crc::Table<CRCType, CRCWidth>(*this);
 }
 
 /**
@@ -323,7 +323,7 @@ inline CRC::Table<CRCType, CRCWidth> CRC::Parameters<CRCType, CRCWidth>::MakeTab
     @tparam CRCWidth Number of bits in the CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRC::Table<CRCType, CRCWidth>::Table(const Parameters<CRCType, CRCWidth> & params) :
+inline crc::Table<CRCType, CRCWidth>::Table(const Parameters<CRCType, CRCWidth> & params) :
     parameters(params)
 {
     InitTable();
@@ -337,7 +337,7 @@ inline CRC::Table<CRCType, CRCWidth>::Table(const Parameters<CRCType, CRCWidth> 
     @tparam CRCWidth Number of bits in the CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRC::Table<CRCType, CRCWidth>::Table(Parameters<CRCType, CRCWidth> && params) :
+inline crc::Table<CRCType, CRCWidth>::Table(Parameters<CRCType, CRCWidth> && params) :
     parameters(::std::move(params))
 {
     InitTable();
@@ -351,7 +351,7 @@ inline CRC::Table<CRCType, CRCWidth>::Table(Parameters<CRCType, CRCWidth> && par
     @return CRC parameters
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline const CRC::Parameters<CRCType, CRCWidth> & CRC::Table<CRCType, CRCWidth>::GetParameters() const
+inline const crc::Parameters<CRCType, CRCWidth> & crc::Table<CRCType, CRCWidth>::GetParameters() const
 {
     return parameters;
 }
@@ -363,7 +363,7 @@ inline const CRC::Parameters<CRCType, CRCWidth> & CRC::Table<CRCType, CRCWidth>:
     @return CRC table
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline const CRCType * CRC::Table<CRCType, CRCWidth>::GetTable() const
+inline const CRCType * crc::Table<CRCType, CRCWidth>::GetTable() const
 {
     return table;
 }
@@ -376,7 +376,7 @@ inline const CRCType * CRC::Table<CRCType, CRCWidth>::GetTable() const
     @return CRC table entry
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::Table<CRCType, CRCWidth>::operator[](unsigned char index) const
+inline CRCType crc::Table<CRCType, CRCWidth>::operator[](unsigned char index) const
 {
     return table[index];
 }
@@ -387,7 +387,7 @@ inline CRCType CRC::Table<CRCType, CRCWidth>::operator[](unsigned char index) co
     @tparam CRCWidth Number of bits in the CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline void CRC::Table<CRCType, CRCWidth>::InitTable()
+inline void crc::Table<CRCType, CRCWidth>::InitTable()
 {
     // For masking off the bits for the CRC (in the event that the number of bits in CRCType is larger than CRCWidth)
     static crcpp_constexpr CRCType BIT_MASK((CRCType(1) << (CRCWidth - CRCType(1))) |
@@ -402,7 +402,7 @@ inline void CRC::Table<CRCType, CRCWidth>::InitTable()
     // Loop over each dividend (each possible number storable in an unsigned char)
     do
     {
-        crc = CRC::CalculateRemainder<CRCType, CRCWidth>(&byte, sizeof(byte), parameters, CRCType(0));
+        crc = crc::CalculateRemainder<CRCType, CRCWidth>(&byte, sizeof(byte), parameters, CRCType(0));
 
         // This mask might not be necessary; all unit tests pass with this line commented out,
         // but that might just be a coincidence based on the CRC parameters used for testing.
@@ -431,7 +431,7 @@ inline void CRC::Table<CRCType, CRCWidth>::InitTable()
     @return CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Parameters<CRCType, CRCWidth> & parameters)
+inline CRCType crc::Calculate(const void * data, crcpp_size size, const Parameters<CRCType, CRCWidth> & parameters)
 {
     CRCType remainder = CalculateRemainder(data, size, parameters, parameters.initialValue);
 
@@ -451,7 +451,7 @@ inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Paramete
     @return CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Parameters<CRCType, CRCWidth> & parameters, CRCType crc)
+inline CRCType crc::Calculate(const void * data, crcpp_size size, const Parameters<CRCType, CRCWidth> & parameters, CRCType crc)
 {
     CRCType remainder = UndoFinalize<CRCType, CRCWidth>(crc, parameters.finalXOR, parameters.reflectInput != parameters.reflectOutput);
 
@@ -472,7 +472,7 @@ inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Paramete
     @return CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Table<CRCType, CRCWidth> & lookupTable)
+inline CRCType crc::Calculate(const void * data, crcpp_size size, const Table<CRCType, CRCWidth> & lookupTable)
 {
     const Parameters<CRCType, CRCWidth> & parameters = lookupTable.GetParameters();
 
@@ -495,7 +495,7 @@ inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Table<CR
     @return CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Table<CRCType, CRCWidth> & lookupTable, CRCType crc)
+inline CRCType crc::Calculate(const void * data, crcpp_size size, const Table<CRCType, CRCWidth> & lookupTable, CRCType crc)
 {
     const Parameters<CRCType, CRCWidth> & parameters = lookupTable.GetParameters();
 
@@ -516,7 +516,7 @@ inline CRCType CRC::Calculate(const void * data, crcpp_size size, const Table<CR
     @return Reflected value
 */
 template <typename IntegerType>
-inline IntegerType CRC::Reflect(IntegerType value, crcpp_uint16 numBits)
+inline IntegerType crc::Reflect(IntegerType value, crcpp_uint16 numBits)
 {
     IntegerType reversedValue(0);
 
@@ -539,7 +539,7 @@ inline IntegerType CRC::Reflect(IntegerType value, crcpp_uint16 numBits)
     @return Final CRC
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::Finalize(CRCType remainder, CRCType finalXOR, bool reflectOutput)
+inline CRCType crc::Finalize(CRCType remainder, CRCType finalXOR, bool reflectOutput)
 {
     // For masking off the bits for the CRC (in the event that the number of bits in CRCType is larger than CRCWidth)
     static crcpp_constexpr CRCType BIT_MASK = (CRCType(1) << (CRCWidth - CRCType(1))) |
@@ -571,7 +571,7 @@ inline CRCType CRC::Finalize(CRCType remainder, CRCType finalXOR, bool reflectOu
     @return Un-finalized CRC remainder
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::UndoFinalize(CRCType crc, CRCType finalXOR, bool reflectOutput)
+inline CRCType crc::UndoFinalize(CRCType crc, CRCType finalXOR, bool reflectOutput)
 {
     // For masking off the bits for the CRC (in the event that the number of bits in CRCType is larger than CRCWidth)
     static crcpp_constexpr CRCType BIT_MASK = (CRCType(1) << (CRCWidth - CRCType(1))) |
@@ -598,7 +598,7 @@ inline CRCType CRC::UndoFinalize(CRCType crc, CRCType finalXOR, bool reflectOutp
     @return CRC remainder
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::CalculateRemainder(const void * data, crcpp_size size, const Parameters<CRCType, CRCWidth> & parameters, CRCType remainder)
+inline CRCType crc::CalculateRemainder(const void * data, crcpp_size size, const Parameters<CRCType, CRCWidth> & parameters, CRCType remainder)
 {
 #ifdef CRCPP_USE_CPP11
     // This static_assert is put here because this function will always be compiled in no matter what
@@ -616,7 +616,7 @@ inline CRCType CRC::CalculateRemainder(const void * data, crcpp_size size, const
     // computation from the inner loop (looping over each bit) as possible.
     if (parameters.reflectInput)
     {
-        CRCType polynomial = CRC::Reflect(parameters.polynomial, CRCWidth);
+        CRCType polynomial = crc::Reflect(parameters.polynomial, CRCWidth);
         while (size--)
         {
             remainder = static_cast<CRCType>(remainder ^ *current++);
@@ -715,7 +715,7 @@ inline CRCType CRC::CalculateRemainder(const void * data, crcpp_size size, const
     @return CRC remainder
 */
 template <typename CRCType, crcpp_uint16 CRCWidth>
-inline CRCType CRC::CalculateRemainder(const void * data, crcpp_size size, const Table<CRCType, CRCWidth> & lookupTable, CRCType remainder)
+inline CRCType crc::CalculateRemainder(const void * data, crcpp_size size, const Table<CRCType, CRCWidth> & lookupTable, CRCType remainder)
 {
     const unsigned char * current = reinterpret_cast<const unsigned char *>(data);
 
@@ -778,7 +778,7 @@ inline CRCType CRC::CalculateRemainder(const void * data, crcpp_size size, const
         - check value    = 0x7
     @return CRC-4 ITU parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 4> & CRC::CRC_4_ITU()
+inline const crc::Parameters<crcpp_uint8, 4> & crc::CRC_4_ITU()
 {
     static const Parameters<crcpp_uint8, 4> parameters = { 0x3, 0x0, 0x0, true, true };
     return parameters;
@@ -796,7 +796,7 @@ inline const CRC::Parameters<crcpp_uint8, 4> & CRC::CRC_4_ITU()
         - check value    = 0x00
     @return CRC-5 EPC parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 5> & CRC::CRC_5_EPC()
+inline const crc::Parameters<crcpp_uint8, 5> & crc::CRC_5_EPC()
 {
     static const Parameters<crcpp_uint8, 5> parameters = { 0x09, 0x09, 0x00, false, false };
     return parameters;
@@ -814,7 +814,7 @@ inline const CRC::Parameters<crcpp_uint8, 5> & CRC::CRC_5_EPC()
         - check value    = 0x07
     @return CRC-5 ITU parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 5> & CRC::CRC_5_ITU()
+inline const crc::Parameters<crcpp_uint8, 5> & crc::CRC_5_ITU()
 {
     static const Parameters<crcpp_uint8, 5> parameters = { 0x15, 0x00, 0x00, true, true };
     return parameters;
@@ -832,7 +832,7 @@ inline const CRC::Parameters<crcpp_uint8, 5> & CRC::CRC_5_ITU()
         - check value    = 0x19
     @return CRC-5 USB parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 5> & CRC::CRC_5_USB()
+inline const crc::Parameters<crcpp_uint8, 5> & crc::CRC_5_USB()
 {
     static const Parameters<crcpp_uint8, 5> parameters = { 0x05, 0x1F, 0x1F, true, true };
     return parameters;
@@ -850,7 +850,7 @@ inline const CRC::Parameters<crcpp_uint8, 5> & CRC::CRC_5_USB()
         - check value    = 0x0D
     @return CRC-6 CDMA2000-A parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 6> & CRC::CRC_6_CDMA2000A()
+inline const crc::Parameters<crcpp_uint8, 6> & crc::CRC_6_CDMA2000A()
 {
     static const Parameters<crcpp_uint8, 6> parameters = { 0x27, 0x3F, 0x00, false, false };
     return parameters;
@@ -868,7 +868,7 @@ inline const CRC::Parameters<crcpp_uint8, 6> & CRC::CRC_6_CDMA2000A()
         - check value    = 0x3B
     @return CRC-6 CDMA2000-B parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 6> & CRC::CRC_6_CDMA2000B()
+inline const crc::Parameters<crcpp_uint8, 6> & crc::CRC_6_CDMA2000B()
 {
     static const Parameters<crcpp_uint8, 6> parameters = { 0x07, 0x3F, 0x00, false, false };
     return parameters;
@@ -886,7 +886,7 @@ inline const CRC::Parameters<crcpp_uint8, 6> & CRC::CRC_6_CDMA2000B()
         - check value    = 0x06
     @return CRC-6 ITU parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 6> & CRC::CRC_6_ITU()
+inline const crc::Parameters<crcpp_uint8, 6> & crc::CRC_6_ITU()
 {
     static const Parameters<crcpp_uint8, 6> parameters = { 0x03, 0x00, 0x00, true, true };
     return parameters;
@@ -904,7 +904,7 @@ inline const CRC::Parameters<crcpp_uint8, 6> & CRC::CRC_6_ITU()
         - check value    = 0x75
     @return CRC-7 JEDEC parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 7> & CRC::CRC_7()
+inline const crc::Parameters<crcpp_uint8, 7> & crc::CRC_7()
 {
     static const Parameters<crcpp_uint8, 7> parameters = { 0x09, 0x00, 0x00, false, false };
     return parameters;
@@ -923,7 +923,7 @@ inline const CRC::Parameters<crcpp_uint8, 7> & CRC::CRC_7()
         - check value    = 0xF4
     @return CRC-8 SMBus parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8()
+inline const crc::Parameters<crcpp_uint8, 8> & crc::CRC_8()
 {
     static const Parameters<crcpp_uint8, 8> parameters = { 0x07, 0x00, 0x00, false, false };
     return parameters;
@@ -942,7 +942,7 @@ inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8()
         - check value    = 0x97
     @return CRC-8 EBU parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8_EBU()
+inline const crc::Parameters<crcpp_uint8, 8> & crc::CRC_8_EBU()
 {
     static const Parameters<crcpp_uint8, 8> parameters = { 0x1D, 0xFF, 0x00, true, true };
     return parameters;
@@ -960,7 +960,7 @@ inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8_EBU()
         - check value    = 0xA1
     @return CRC-8 MAXIM parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8_MAXIM()
+inline const crc::Parameters<crcpp_uint8, 8> & crc::CRC_8_MAXIM()
 {
     static const Parameters<crcpp_uint8, 8> parameters = { 0x31, 0x00, 0x00, true, true };
     return parameters;
@@ -978,7 +978,7 @@ inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8_MAXIM()
         - check value    = 0x25
     @return CRC-8 WCDMA parameters
 */
-inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8_WCDMA()
+inline const crc::Parameters<crcpp_uint8, 8> & crc::CRC_8_WCDMA()
 {
     static const Parameters<crcpp_uint8, 8> parameters = { 0x9B, 0x00, 0x00, true, true };
     return parameters;
@@ -996,7 +996,7 @@ inline const CRC::Parameters<crcpp_uint8, 8> & CRC::CRC_8_WCDMA()
         - check value    = 0x199
     @return CRC-10 ITU parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 10> & CRC::CRC_10()
+inline const crc::Parameters<crcpp_uint16, 10> & crc::CRC_10()
 {
     static const Parameters<crcpp_uint16, 10> parameters = { 0x233, 0x000, 0x000, false, false };
     return parameters;
@@ -1014,7 +1014,7 @@ inline const CRC::Parameters<crcpp_uint16, 10> & CRC::CRC_10()
         - check value    = 0x233
     @return CRC-10 CDMA2000 parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 10> & CRC::CRC_10_CDMA2000()
+inline const crc::Parameters<crcpp_uint16, 10> & crc::CRC_10_CDMA2000()
 {
     static const Parameters<crcpp_uint16, 10> parameters = { 0x3D9, 0x3FF, 0x000, false, false };
     return parameters;
@@ -1032,7 +1032,7 @@ inline const CRC::Parameters<crcpp_uint16, 10> & CRC::CRC_10_CDMA2000()
         - check value    = 0x5A3
     @return CRC-11 FlexRay parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 11> & CRC::CRC_11()
+inline const crc::Parameters<crcpp_uint16, 11> & crc::CRC_11()
 {
     static const Parameters<crcpp_uint16, 11> parameters = { 0x385, 0x01A, 0x000, false, false };
     return parameters;
@@ -1050,7 +1050,7 @@ inline const CRC::Parameters<crcpp_uint16, 11> & CRC::CRC_11()
         - check value    = 0xD4D
     @return CRC-12 CDMA2000 parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 12> & CRC::CRC_12_CDMA2000()
+inline const crc::Parameters<crcpp_uint16, 12> & crc::CRC_12_CDMA2000()
 {
     static const Parameters<crcpp_uint16, 12> parameters = { 0xF13, 0xFFF, 0x000, false, false };
     return parameters;
@@ -1068,7 +1068,7 @@ inline const CRC::Parameters<crcpp_uint16, 12> & CRC::CRC_12_CDMA2000()
         - check value    = 0xF5B
     @return CRC-12 DECT parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 12> & CRC::CRC_12_DECT()
+inline const crc::Parameters<crcpp_uint16, 12> & crc::CRC_12_DECT()
 {
     static const Parameters<crcpp_uint16, 12> parameters = { 0x80F, 0x000, 0x000, false, false };
     return parameters;
@@ -1086,7 +1086,7 @@ inline const CRC::Parameters<crcpp_uint16, 12> & CRC::CRC_12_DECT()
         - check value    = 0xDAF
     @return CRC-12 UMTS parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 12> & CRC::CRC_12_UMTS()
+inline const crc::Parameters<crcpp_uint16, 12> & crc::CRC_12_UMTS()
 {
     static const Parameters<crcpp_uint16, 12> parameters = { 0x80F, 0x000, 0x000, false, true };
     return parameters;
@@ -1104,7 +1104,7 @@ inline const CRC::Parameters<crcpp_uint16, 12> & CRC::CRC_12_UMTS()
         - check value    = 0x04FA
     @return CRC-13 BBC parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 13> & CRC::CRC_13_BBC()
+inline const crc::Parameters<crcpp_uint16, 13> & crc::CRC_13_BBC()
 {
     static const Parameters<crcpp_uint16, 13> parameters = { 0x1CF5, 0x0000, 0x0000, false, false };
    return parameters;
@@ -1122,7 +1122,7 @@ inline const CRC::Parameters<crcpp_uint16, 13> & CRC::CRC_13_BBC()
         - check value    = 0x059E
     @return CRC-15 CAN parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 15> & CRC::CRC_15()
+inline const crc::Parameters<crcpp_uint16, 15> & crc::CRC_15()
 {
     static const Parameters<crcpp_uint16, 15> parameters = { 0x4599, 0x0000, 0x0000, false, false };
     return parameters;
@@ -1140,7 +1140,7 @@ inline const CRC::Parameters<crcpp_uint16, 15> & CRC::CRC_15()
         - check value    = 0x2566
     @return CRC-15 MPT1327 parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 15> & CRC::CRC_15_MPT1327()
+inline const crc::Parameters<crcpp_uint16, 15> & crc::CRC_15_MPT1327()
 {
     static const Parameters<crcpp_uint16, 15> parameters = { 0x6815, 0x0000, 0x0001, false, false };
     return parameters;
@@ -1159,7 +1159,7 @@ inline const CRC::Parameters<crcpp_uint16, 15> & CRC::CRC_15_MPT1327()
         - check value    = 0xBB3D
     @return CRC-16 ARC parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_ARC()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_ARC()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8005, 0x0000, 0x0000, true, true };
     return parameters;
@@ -1177,7 +1177,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_ARC()
         - check value    = 0xFEE8
     @return CRC-16 BUYPASS parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_BUYPASS()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_BUYPASS()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8005, 0x0000, 0x0000, false, false };
     return parameters;
@@ -1195,7 +1195,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_BUYPASS()
         - check value    = 0x29B1
     @return CRC-16 CCITT FALSE parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_CCITTFALSE()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_CCITTFALSE()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x1021, 0xFFFF, 0x0000, false, false };
     return parameters;
@@ -1214,7 +1214,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_CCITTFALSE()
         - check value    = 0x4C06
     @return CRC-16 CDMA2000 parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_CDMA2000()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_CDMA2000()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0xC867, 0xFFFF, 0x0000, false, false };
     return parameters;
@@ -1232,7 +1232,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_CDMA2000()
         - check value    = 0xAEE7
     @return CRC-16 CMS parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_CMS()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_CMS()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8005, 0xFFFF, 0x0000, false, false };
     return parameters;
@@ -1250,7 +1250,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_CMS()
         - check value    = 0x007E
     @return CRC-16 DECT-R parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_DECTR()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_DECTR()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x0589, 0x0000, 0x0001, false, false };
     return parameters;
@@ -1268,7 +1268,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_DECTR()
         - check value    = 0x007F
     @return CRC-16 DECT-X parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_DECTX()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_DECTX()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x0589, 0x0000, 0x0000, false, false };
     return parameters;
@@ -1286,7 +1286,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_DECTX()
         - check value    = 0xEA82
     @return CRC-16 DNP parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_DNP()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_DNP()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x3D65, 0x0000, 0xFFFF, true, true };
     return parameters;
@@ -1305,7 +1305,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_DNP()
         - check value    = 0xD64E
     @return CRC-16 GENIBUS parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_GENIBUS()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_GENIBUS()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x1021, 0xFFFF, 0xFFFF, false, false };
     return parameters;
@@ -1323,7 +1323,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_GENIBUS()
         - check value    = 0x2189
     @return CRC-16 KERMIT parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_KERMIT()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_KERMIT()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x1021, 0x0000, 0x0000, true, true };
     return parameters;
@@ -1342,7 +1342,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_KERMIT()
         - check value    = 0x44C2
     @return CRC-16 MAXIM parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_MAXIM()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_MAXIM()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8005, 0x0000, 0xFFFF, true, true };
     return parameters;
@@ -1360,7 +1360,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_MAXIM()
         - check value    = 0x4B37
     @return CRC-16 MODBUS parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_MODBUS()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_MODBUS()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8005, 0xFFFF, 0x0000, true, true };
     return parameters;
@@ -1378,7 +1378,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_MODBUS()
         - check value    = 0xD0DB
     @return CRC-16 T10-DIF parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_T10DIF()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_T10DIF()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8BB7, 0x0000, 0x0000, false, false };
     return parameters;
@@ -1396,7 +1396,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_T10DIF()
         - check value    = 0xB4C8
     @return CRC-16 USB parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_USB()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_USB()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x8005, 0xFFFF, 0xFFFF, true, true };
     return parameters;
@@ -1416,7 +1416,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_USB()
         - check value    = 0x906E
     @return CRC-16 X-25 parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_X25()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_X25()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x1021, 0xFFFF, 0xFFFF, true, true };
     return parameters;
@@ -1434,7 +1434,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_X25()
         - check value    = 0x31C3
     @return CRC-16 XMODEM parameters
 */
-inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_XMODEM()
+inline const crc::Parameters<crcpp_uint16, 16> & crc::CRC_16_XMODEM()
 {
     static const Parameters<crcpp_uint16, 16> parameters = { 0x1021, 0x0000, 0x0000, false, false };
     return parameters;
@@ -1453,7 +1453,7 @@ inline const CRC::Parameters<crcpp_uint16, 16> & CRC::CRC_16_XMODEM()
         - check value    = 0x04F03
     @return CRC-17 CAN parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 17> & CRC::CRC_17_CAN()
+inline const crc::Parameters<crcpp_uint32, 17> & crc::CRC_17_CAN()
 {
     static const Parameters<crcpp_uint32, 17> parameters = { 0x1685B, 0x00000, 0x00000, false, false };
     return parameters;
@@ -1471,7 +1471,7 @@ inline const CRC::Parameters<crcpp_uint32, 17> & CRC::CRC_17_CAN()
         - check value    = 0x0ED841
     @return CRC-21 CAN parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 21> & CRC::CRC_21_CAN()
+inline const crc::Parameters<crcpp_uint32, 21> & crc::CRC_21_CAN()
 {
     static const Parameters<crcpp_uint32, 21> parameters = { 0x102899, 0x000000, 0x000000, false, false };
     return parameters;
@@ -1489,7 +1489,7 @@ inline const CRC::Parameters<crcpp_uint32, 21> & CRC::CRC_21_CAN()
         - check value    = 0x21CF02
     @return CRC-24 OPENPGP parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 24> & CRC::CRC_24()
+inline const crc::Parameters<crcpp_uint32, 24> & crc::CRC_24()
 {
     static const Parameters<crcpp_uint32, 24> parameters = { 0x864CFB, 0xB704CE, 0x000000, false, false };
     return parameters;
@@ -1507,7 +1507,7 @@ inline const CRC::Parameters<crcpp_uint32, 24> & CRC::CRC_24()
         - check value    = 0x7979BD
     @return CRC-24 FlexRay-A parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 24> & CRC::CRC_24_FLEXRAYA()
+inline const crc::Parameters<crcpp_uint32, 24> & crc::CRC_24_FLEXRAYA()
 {
     static const Parameters<crcpp_uint32, 24> parameters = { 0x5D6DCB, 0xFEDCBA, 0x000000, false, false };
     return parameters;
@@ -1525,7 +1525,7 @@ inline const CRC::Parameters<crcpp_uint32, 24> & CRC::CRC_24_FLEXRAYA()
         - check value    = 0x1F23B8
     @return CRC-24 FlexRay-B parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 24> & CRC::CRC_24_FLEXRAYB()
+inline const crc::Parameters<crcpp_uint32, 24> & crc::CRC_24_FLEXRAYB()
 {
     static const Parameters<crcpp_uint32, 24> parameters = { 0x5D6DCB, 0xABCDEF, 0x000000, false, false };
     return parameters;
@@ -1543,7 +1543,7 @@ inline const CRC::Parameters<crcpp_uint32, 24> & CRC::CRC_24_FLEXRAYB()
         - check value    = 0x3B3CB540
     @return CRC-30 CDMA parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 30> & CRC::CRC_30()
+inline const crc::Parameters<crcpp_uint32, 30> & crc::CRC_30()
 {
     static const Parameters<crcpp_uint32, 30> parameters = { 0x2030B9C7, 0x3FFFFFFF, 0x00000000, false, false };
     return parameters;
@@ -1562,7 +1562,7 @@ inline const CRC::Parameters<crcpp_uint32, 30> & CRC::CRC_30()
         - check value    = 0xCBF43926
     @return CRC-32 parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32()
+inline const crc::Parameters<crcpp_uint32, 32> & crc::CRC_32()
 {
     static const Parameters<crcpp_uint32, 32> parameters = { 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true };
     return parameters;
@@ -1580,7 +1580,7 @@ inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32()
         - check value    = 0xFC891918
     @return CRC-32 BZIP2 parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_BZIP2()
+inline const crc::Parameters<crcpp_uint32, 32> & crc::CRC_32_BZIP2()
 {
     static const Parameters<crcpp_uint32, 32> parameters = { 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, false, false };
     return parameters;
@@ -1599,7 +1599,7 @@ inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_BZIP2()
         - check value    = 0xE3069283
     @return CRC-32 C parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_C()
+inline const crc::Parameters<crcpp_uint32, 32> & crc::CRC_32_C()
 {
     static const Parameters<crcpp_uint32, 32> parameters = { 0x1EDC6F41, 0xFFFFFFFF, 0xFFFFFFFF, true, true };
     return parameters;
@@ -1618,7 +1618,7 @@ inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_C()
         - check value    = 0x0376E6E7
     @return CRC-32 MPEG-2 parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_MPEG2()
+inline const crc::Parameters<crcpp_uint32, 32> & crc::CRC_32_MPEG2()
 {
     static const Parameters<crcpp_uint32, 32> parameters = { 0x04C11DB7, 0xFFFFFFFF, 0x00000000, false, false };
     return parameters;
@@ -1636,7 +1636,7 @@ inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_MPEG2()
         - check value    = 0x765E7680
     @return CRC-32 POSIX parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_POSIX()
+inline const crc::Parameters<crcpp_uint32, 32> & crc::CRC_32_POSIX()
 {
     static const Parameters<crcpp_uint32, 32> parameters = { 0x04C11DB7, 0x00000000, 0xFFFFFFFF, false, false };
     return parameters;
@@ -1655,7 +1655,7 @@ inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_POSIX()
         - check value    = 0x3010BF7F
     @return CRC-32 Q parameters
 */
-inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_Q()
+inline const crc::Parameters<crcpp_uint32, 32> & crc::CRC_32_Q()
 {
     static const Parameters<crcpp_uint32, 32> parameters = { 0x814141AB, 0x00000000, 0x00000000, false, false };
     return parameters;
@@ -1673,7 +1673,7 @@ inline const CRC::Parameters<crcpp_uint32, 32> & CRC::CRC_32_Q()
         - check value    = 0xD4164FC646
     @return CRC-40 GSM parameters
 */
-inline const CRC::Parameters<crcpp_uint64, 40> & CRC::CRC_40_GSM()
+inline const crc::Parameters<crcpp_uint64, 40> & crc::CRC_40_GSM()
 {
     static const Parameters<crcpp_uint64, 40> parameters = { 0x0004820009, 0x0000000000, 0xFFFFFFFFFF, false, false };
     return parameters;
@@ -1691,7 +1691,7 @@ inline const CRC::Parameters<crcpp_uint64, 40> & CRC::CRC_40_GSM()
         - check value    = 0x6C40DF5F0B497347
     @return CRC-64 ECMA parameters
 */
-inline const CRC::Parameters<crcpp_uint64, 64> & CRC::CRC_64()
+inline const crc::Parameters<crcpp_uint64, 64> & crc::CRC_64()
 {
     static const Parameters<crcpp_uint64, 64> parameters = { 0x42F0E1EBA9EA3693, 0x0000000000000000, 0x0000000000000000, false, false };
     return parameters;
