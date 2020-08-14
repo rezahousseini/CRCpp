@@ -1,0 +1,4 @@
+option('CRCPP_USE_NAMESPACE', type : 'boolean', value : false, description : 'Define to place all CRC++ code within the ::CRCPP namespace')
+option('CRCPP_BRANCHLESS', type : 'boolean', value : false, description : 'Define to enable a branchless CRC implementation')
+option('CRCPP_USE_CPP11', type : 'boolean', value : true, description : 'Define to enables C++11 features')
+option('CRCPP_INCLUDE_ESOTERIC_CRC_DEFINITIONS', type : 'boolean', value : false, description : 'Define to include definitions for little-used CRCs')
